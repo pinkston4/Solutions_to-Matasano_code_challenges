@@ -34,6 +34,11 @@ class Hex_to_BaseSF:
         self.a = input_hex
     
     def converter(self):
+        """
+        The line of code below actually does whole job. No need for a class or
+        additional methods. replace self.a with the hex string and the below
+        line of code does everthing
+        """
         b64 = codecs.encode(codecs.decode(self.a, 'hex'), 'base64').decode().replace('\n', '')
         return(b64)
 
