@@ -61,6 +61,9 @@ def repeating_key_xor(message, key):
 
 def xor(a, j):
     """
+    xor the encrypted string(that has been converted to bytes) against 
+    a single ascii character
+    return: byte literal
     """
     z = b''
     for byte in a:
@@ -132,18 +135,30 @@ def break_rep_key_xor_helper(ciphertxt, keysize):
 
 def helper_two(average_distances, ciphertxt):
     """
-    I couldnt think of a better name for this function
+    I couldnt think of a better name for this function..I promise I will rename lol
     """
+    # sort the average_distances list of dicts by average distance, 
+    # return the dict with shortest hamming distance, assign to possible_key_size
     possible_key_size = sorted(average_distances, key=itemgetter("avg_distance"))[0]
+
+    # possible decrypted txt
     possible_txt = []
+
+    # possible key size 
     possible_key = possible_key_size["key"]
+
+    # actual key
     key = b''
+
     for j in range(possible_key):
         block = b''
         for i in range(j, len(ciphertxt), possible_key):
             block += bytes([ciphertxt[i]])
         key += bytes([bruteforce(block)['key']])
-    possible_txt.append((repeating_key_xor(ciphertxt, key), key)) 
+
+    # appends both txt and key as a single object to the list
+    possible_txt.append((repeating_key_xor(ciphertxt, key), key))
+    # return the message with the highest score 
     return max(possible_txt, key=lambda x: get_score(x[0])) 
 
 
@@ -153,20 +168,17 @@ def break_rep_key_xor(ciphertxt):
     avg_distances = []
     for keysize in range(2, 41):
 
-        # the hamming distances for each of the blocks of a given keysize
+        # the hamming distances for each pair of the blocks of a given keysize
         distances = []
 
-        #
+        # break the ciphertxt into blocks the length of keysize, store in list
         blocks = break_rep_key_xor_helper(ciphertxt, keysize)
         while True:
             try:
 
-                block1 = blocks[0]
-                block2 = blocks[1]
-
-                # calculate the hamming distance
+                # calculate the hamming distance between the first two blocks
                 # then normalize by dividing by keysize 
-                normalized_distance = hamming_distance(block1, block2) / keysize
+                normalized_distance = hamming_distance(blocks[0], blocks[1]) / keysize
                 distances.append(normalized_distance)
 
                 # delete the first two elements of the blocks list, so they 
@@ -218,6 +230,7 @@ def main():
     
     # the correct key and result
     result, key = break_rep_key_xor(ciphertxt)
+    print("The repeating key{}".format(key))
     print("{}".format(result))
 
 
