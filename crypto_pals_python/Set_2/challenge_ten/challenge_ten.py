@@ -26,7 +26,8 @@ def main():
     init_vector = bytes(("\00" * block_size), encoding="ascii")
     with open("challenge_data.txt") as data:
         cipher = base64.b64decode(data.read())
-        print(cbc_decrypt(cipher, key, init_vector, block_size))
+        a = open("out.txt", "w")
+        a.write(cbc_decrypt(cipher, key, init_vector, block_size).decode("utf-8"))
 
 
 if __name__ == "__main__":
