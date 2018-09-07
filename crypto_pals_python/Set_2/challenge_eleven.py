@@ -17,15 +17,14 @@ import random
 from Crypto.Cipher import AES
 
 
-# def ecb_encoded(cipher, block_size):
-#     block_range = range(0, len(cipher), block_size)
-#     number_of_blocks = Counter(cipher[i : i + block_size] for i in block_range)
-#     m = number_of_blocks.most_common(1)
-#     if m and m[0][1] > 1:
-#         return True
-
-
 def pkcs_seven(message, intended_block_size):
+    """
+    a function that implements the PKCS#7 padding standard
+    Arguments:
+        message = block from the txt that should be the leng of the 
+        "intended_block_size" or less long. If less then padding is implemented
+        intended_block_size = intended size of the block
+    """
     if (intended_block_size - len(message)) > 0:
         padding = int(intended_block_size - len(message))
     else:
@@ -38,6 +37,10 @@ def pkcs_seven(message, intended_block_size):
 
 def random_bytes(keysize):
     """
+    Arguments: 
+        keysize = the desired length (in bytes) of the random string of bytes
+    Returns: 
+        a random string of bytes of the desired length
     """
     key = ''
     for j in range(keysize):
@@ -48,12 +51,19 @@ def random_bytes(keysize):
 
 def main(argv):
     """
+    The encryption oracle
+    Arguments:
+        argv = should be a relative path to a file that you wish to encrypt
+    Returns:
+        a tuple containing the encrypted text along with either a 1 or a 0
+        if a 1 is returned the txt was encoded under ECB mode if a 0 is returned
+        the text was encoded in CBC mode
     """
     keysize = 16
     aes_key = random_bytes(keysize)
     prepend = random_bytes(random.randint(5, 10))
     append = random_bytes(random.randint(5, 10))
-    
+
     try:
         path = dir_path + argv[0]
         with open(path) as inputfile:
