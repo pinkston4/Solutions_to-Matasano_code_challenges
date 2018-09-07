@@ -53,6 +53,7 @@ def main(argv):
     aes_key = random_bytes(keysize)
     prepend = random_bytes(random.randint(5, 10))
     append = random_bytes(random.randint(5, 10))
+    
     try:
         path = dir_path + argv[0]
         with open(path) as inputfile:
@@ -65,21 +66,21 @@ def main(argv):
 
     if random.randint(0, 1):
         aes_ecb = AES.new(aes_key, AES.MODE_ECB)
+        out = bytearray()
         for j in range(0, len(txt), AES.block_size):
             block = txt[j: j + AES.block_size]
             padded = pkcs_seven(block, AES.block_size)
-            out = aes_ecb.encrypt(padded)
-            print(out)
-        # return (out, 1)
+            out += aes_ecb.encrypt(padded)
+        return (out, 1)
     else:
         init_vector = random_bytes(AES.block_size)
         aes = AES.new(key=aes_key, mode=AES.MODE_CBC, IV=init_vector)
+        out = bytearray()
         for j in range(0, len(txt), AES.block_size):
             block = txt[j: j + AES.block_size]
             padded = pkcs_seven(block, AES.block_size)
-            out = aes.encrypt(padded)
-            print(out)
-        # return (out, 0)
+            out += aes.encrypt(padded)
+        return (out, 0)
 
 
 if __name__ == "__main__":
